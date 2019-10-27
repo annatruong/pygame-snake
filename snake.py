@@ -79,7 +79,17 @@ while run:
             # Draw snake
             i = 0
             while i < len(body):
-                pygame.draw.rect(window, purple, (body[i][0]+1, body[i][1]+1, cell_width-1, cell_width-1))
+                if i == 0:
+                    eye_1 = (body[i][0] + (cell_width // 2), body[i][1] + 8)
+                    eye_2 = (body[i][0] + (cell_width // 2), body[i][1] + 16)
+                    if direction == 'up' or direction == 'down':
+                        eye_1 = (body[i][0] + 8, body[i][1] + (cell_width // 2))
+                        eye_2 = (body[i][0] + 16, body[i][1] + (cell_width // 2))
+                    pygame.draw.rect(window, purple, (body[i][0]+1, body[i][1]+1, cell_width-1, cell_width-1))
+                    pygame.draw.circle(window, black, eye_1, 3)
+                    pygame.draw.circle(window, black, eye_2, 3)
+                else:
+                    pygame.draw.rect(window, purple, (body[i][0]+1, body[i][1]+1, cell_width-1, cell_width-1))
                 i += 1
 
             # Draw food           
