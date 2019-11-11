@@ -15,29 +15,56 @@ black = (0,0,0)
 
 # Font objects
 title_font = pygame.font.SysFont('Arial', 100)
-instruction_font = pygame.font.SysFont('Arial', 35)
+info_font = pygame.font.SysFont('Arial', 35)
+score_font = pygame.font.SysFont('Arial', 25)
 
-# Function to create start and game over screen
-def display_start_end(window, title_txt, inst_text):
+# Function to create start ascreen
+def display_start_screen(window, title_txt, info_text):
+
     window.fill(black)
     title = title_font.render(title_txt, True, white)
     title_rect = title.get_rect(center = (width_height // 2, (width_height // 2)  - 50))
-    instruction = instruction_font.render(inst_text, True, white)
-    instruction_rect = instruction.get_rect(center = (width_height // 2, (width_height // 2) + 25))
+    info = info_font.render(info_text, True, white)
+    info_rect = info.get_rect(center = (width_height // 2, (width_height // 2) + 25))
     window.blit(title, title_rect)
-    window.blit(instruction, instruction_rect)
+    window.blit(info, info_rect)
+    pygame.display.update()
+
+# Function to create game over screen
+def display_end_screen(window, title_txt, info_text, total_score):
+
+    window.fill(black)
+    score_text = 'FINAL SCORE: ' + str(total_score)
+    title = title_font.render(title_txt, True, white)
+    title_rect = title.get_rect(center = (width_height // 2, (width_height // 2)  - 50))
+    info = info_font.render(info_text, True, white)
+    info_rect = info.get_rect(center = (width_height // 2, (width_height // 2) + 50))
+    score = info_font.render(score_text, True, white)
+    score_rect = score.get_rect(center = (width_height // 2, (width_height // 2) + 5))
+    window.blit(title, title_rect)
+    window.blit(info, info_rect)
+    window.blit(score, score_rect)
     pygame.display.update()
 
 # Function to draw grid
 def draw_grid(window, rows, w):
+
     window.fill(black)
     x_grid = 0
     y_grid = 0
+    score_txt = str(current_score)
+
     for line in range(rows):
         x_grid += cell_width
         y_grid += cell_width
         pygame.draw.line(window, white, (x_grid, cell_width), (x_grid, w))
         pygame.draw.line(window, white, (0, y_grid), (w, y_grid))
+
+def display_score(window, w, current_score):
+    score_txt = 'SCORE: ' + str(current_score)
+    score = score_font.render(score_txt, True, white)
+    window.blit(score, (5, 5))
+
 
 # Set window
 window = pygame.display.set_mode((width_height, width_height))
@@ -47,13 +74,14 @@ clock = pygame.time.Clock()
 
 game_over = False
 run = True
+current_score = 0
 
 while run:
 
     if game_over == False:
-        display_start_end(window,'SNAKE','PRESS ENTER TO START GAME')
+        display_start_screen(window,'SNAKE', 'PRESS ENTER TO START GAME')
     elif game_over == True:
-        display_start_end(window,'GAME OVER','PRESS ENTER TO RESTART')
+        display_end_screen(window,'GAME OVER', 'PRESS ENTER TO RESTART', current_score)
 
     pygame.display.update()
 
@@ -65,6 +93,7 @@ while run:
         body = []
         x = cell_width
         y = cell_width
+        current_score = 0
         direction = 'right'
         x_food = random.randrange(cell_width, width_height - 5, cell_width)
         y_food = random.randrange(cell_width, width_height - 5, cell_width)
@@ -74,7 +103,8 @@ while run:
         while game:
             pygame.time.delay(150)
             clock.tick(50)
-            draw_grid(window,rows,width_height)
+            draw_grid(window, rows, width_height)
+            display_score(window, width_height, current_score)
 
             # Draw snake
             i = 0
@@ -107,6 +137,7 @@ while run:
                 x_food = random.randrange(cell_width, width_height - 5, cell_width)
                 y_food = random.randrange(cell_width, width_height - 5, cell_width)
                 body.append([x,y])
+                current_score += 1
             
             # Update direction variable when key is pressed
             keys = pygame.key.get_pressed()
